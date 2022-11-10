@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     user_phone: DataTypes.INTEGER,
     AD_check: DataTypes.TINYINT,
     code: DataTypes.INTEGER,
-    refressToken: DataTypes.STRING
+    refreshToken: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Users',

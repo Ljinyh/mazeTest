@@ -51,7 +51,7 @@ module.exports = {
 
         if (existUser[0].id) {
             // token 생성
-            const refressToken = JWT.sign({}, process.env.SECRETKEY, {
+            const refreshToken = JWT.sign({}, process.env.SECRETKEY, {
                 expiresIn: '3d'
             });
 
@@ -69,7 +69,7 @@ module.exports = {
 
             return res.status(201).send({
                 msg: 'success!',
-                refress: refressToken,
+                refresh: refreshToken,
                 access: accessToken
             });
         }

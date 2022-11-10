@@ -21,7 +21,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      refressToken: {
+      refreshToken: {
         allowNull: false,
         type: Sequelize.STRING
       },
