@@ -7,6 +7,7 @@ require("dotenv").config();
 
 function send_message(authNum, phoneNum) {
     Cache.del(phoneNum);
+    Cache.put(phoneNum, authNum);
 
     const date = Date.now().toString();
 

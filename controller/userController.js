@@ -11,7 +11,6 @@ module.exports = {
         const { phoneNum } = req.body;
         const authNum = Math.random().toString().substring(2, 8);
 
-        Cache.put(phoneNum, authNum);
 
         if (phoneNum) {
             send_message(authNum, phoneNum);
