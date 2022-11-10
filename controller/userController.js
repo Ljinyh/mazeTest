@@ -11,7 +11,6 @@ module.exports = {
         const { phoneNum } = req.body;
         const authNum = Math.random().toString().substring(2, 8);
 
-
         if (phoneNum) {
             send_message(authNum, phoneNum);
             return res.status(200).send({ msg: 'success!' });
@@ -34,7 +33,7 @@ module.exports = {
 
         else {
             Cache.del(phoneNum);
-            return res.stauts(200).send({ msg: 'success!' });
+            return res.status(200).send({ msg: 'success!' });
         };
     },
 
