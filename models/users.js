@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
   Users.init({
     user_phone: DataTypes.INTEGER,
     AD_check: DataTypes.TINYINT,
-    code: DataTypes.INTEGER,
     refreshToken: DataTypes.STRING
   }, {
     sequelize,

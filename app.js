@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
 const bodyParser = require("body-parser");
 const { sequelize } = require('./models');
 require('dotenv').config();
@@ -16,10 +18,12 @@ sequelize.sync({ force: false })
 
 
 const corOptions = {
-    origin: "",
+    origin: "http://localhost:3000",
 };
 
 app.use(cors(corOptions));
+app.use(helmet());
+app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -31,8 +35,9 @@ app.use('/api', require('./router/userRouter'));
 
 //Error middleware
 app.use(function (error, req, res, next) {
-    res.status(200).json({
-        message: error.message,
+    console.log(error);
+    res.send({
+        errorMessage: error.message,
     });
 });
 

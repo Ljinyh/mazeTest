@@ -22,7 +22,7 @@ module.exports = {
         const { phoneNum, authCode } = req.body;
 
         const cacheData = Cache.get(phoneNum);
-        console.log(cacheData)
+
         if (!cacheData) {
             return res.status(400).send('인증번호를 다시 요청해주세요.');
         }
@@ -40,37 +40,63 @@ module.exports = {
     // 로그인 & 회원가입 API
     signup: async (req, res) => {
         const { phoneNum, AD_check } = req.body;
+        const { type } = req.query;
 
-        // 유저가 존재하면 토큰 넘기고 바로 로그인, 없으면 가입후 로그인
-        const existUser = await Users.findOrCreate({
-            where: { user_phone: phoneNum },
-            defaults: { AD_check: AD_check }
-        });
-
-        if (existUser[0].id) {
-            // token 생성
-            const refreshToken = JWT.sign({}, process.env.SECRETKEY, {
-                expiresIn: '3d'
+        if (type === "login") {
+            const existUser = await Users.findOne({
+                where: { user_phone: phoneNum }
             });
 
-            const accessToken = JWT.sign({ userId: existUser[0].id }, process.env.SECRETKEY, {
-                expiresIn: '1d', //for test
-                // expiresIn: '1h'
+            if (existUser) {
+                // token 생성
+                const refreshToken = JWT.sign({}, process.env.SECRETKEY, {
+                    expiresIn: '3d'
+                });
+
+                const accessToken = JWT.sign({ userId: existUser.id }, process.env.SECRETKEY, {
+                    expiresIn: '1d'
+                });
+
+                await Users.update({
+                    AD_check: AD_check,
+                    refreshToken: refreshToken
+                }, {
+                    where: { id: existUser.id }
+                });
+
+                return res.status(201).send({
+                    msg: 'success!',
+                    refresh: refreshToken,
+                    access: accessToken
+                });
+            };
+        } else {
+            const existUser = await Users.findOrCreate({
+                where: { user_phone: phoneNum },
+                defaults: { AD_check: AD_check }
             });
 
-            await Users.update({
-                AD_check: AD_check,
-                refressToken: refressToken
-            }, {
-                where: { id: existUser[0].id }
-            });
+            if (existUser[0].id) {
+                // token 생성
+                const refreshToken = JWT.sign({}, process.env.SECRETKEY, {
+                    expiresIn: '3d'
+                });
 
-            return res.status(201).send({
-                msg: 'success!',
-                refresh: refreshToken,
-                access: accessToken
-            });
-        }
+                const accessToken = JWT.sign({ userId: existUser[0].id }, process.env.SECRETKEY, {
+                    expiresIn: '1d', //for test
+                });
+
+                await Users.update(
+                    { refreshToken: refreshToken },
+                    { where: { user_phone: phoneNum } });
+
+                return res.status(201).send({
+                    msg: 'success!',
+                    refresh: refreshToken,
+                    access: accessToken
+                });
+            }
+        };
     },
 
     // 중복확인 API

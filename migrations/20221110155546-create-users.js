@@ -17,10 +17,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.TINYINT
       },
-      code: {
-        allowNull: false,
-        type: Sequelize.INTEGER
-      },
       refreshToken: {
         allowNull: false,
         type: Sequelize.STRING
