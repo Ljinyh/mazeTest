@@ -9,9 +9,21 @@ module.exports = {
     // SMS 문자 인증 API
     sendSMS: async (req, res) => {
         const { phoneNum } = req.body;
+
+        // 유저확인
+        const existUser = await Users.findOne({
+            where: { user_phone: phoneNum }
+        });
+
         const authNum = Math.random().toString().substring(2, 8);
 
-        if (phoneNum) {
+        if (existUser) {
+            return res.status(400).send({
+                errorMessage: '이미 등록된 번호입니다.'
+            });
+        }
+
+        if (phoneNum && !existUser) {
             send_message(authNum, phoneNum);
             return res.status(200).send({ msg: 'success!' });
         };
@@ -98,23 +110,4 @@ module.exports = {
             }
         };
     },
-
-    // 중복확인 API
-    checkNum: async (req, res) => {
-        const { phoneNum } = req.body;
-
-        const existUser = await Users.findOne({
-            where: { user_phone: phoneNum }
-        });
-
-        if (existUser) {
-            return res.statue(400).send({
-                msg: '이미 등록된 번호입니다.'
-            });
-        } else {
-            return res.stauts(200).send({
-                msg: '사용 가능한 번호입니다.'
-            });
-        };
-    }
 };

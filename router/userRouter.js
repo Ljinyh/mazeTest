@@ -13,7 +13,4 @@ router.post('/check-code', wrapAsync(userController.checkCode));
 // 로그인 & 회원가입 API
 router.post('/signup', wrapAsync(userController.signup));
 
-// 중복확인 API
-router.post('/check-num', wrapAsync(userController.checkNum));
-
 module.exports = router;

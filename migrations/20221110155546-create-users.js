@@ -11,7 +11,7 @@ module.exports = {
       },
       user_phone: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       AD_check: {
         allowNull: false,
