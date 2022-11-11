@@ -6,4 +6,4 @@
 - client : 
 
 # API Docs
-https://jinhui-lees-organization.gitbook.io/maze/
+https://jinhui-lees-organization.gitbook.io/maze-1/
