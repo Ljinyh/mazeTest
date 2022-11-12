@@ -13,8 +13,6 @@ function Sign() {
         setStep(2);
     };
 
-    console.log(step);
-    console.log(signType)
     return (
         <div>
             {step === INITIAL_STEP && <Buttons onClick={onSignTypeButtonClick} />}
