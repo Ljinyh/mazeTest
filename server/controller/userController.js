@@ -27,7 +27,7 @@ module.exports = {
         const cacheData = Cache.get(phoneNum); // 관련 폰번호로 저장된 캐시 가져오기
 
         if (!cacheData || cacheData !== authCode) {
-            return res.status(400).send('인증번호를 다시 요청해주세요.');
+            return res.status(400).send('인증번호를 확인해주세요.');
         } else {
             Cache.del(phoneNum); // 인증이 다 끝났다면 캐시 삭제
             return res.status(200).send({ msg: 'success!' });
