@@ -19,7 +19,7 @@ sequelize.sync({ force: false })
 
 // cors option
 const corsOptions = {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"]
 };
 
 app.use(cors(corsOptions));
