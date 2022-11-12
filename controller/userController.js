@@ -35,15 +35,9 @@ module.exports = {
 
         const cacheData = Cache.get(phoneNum);
 
-        if (!cacheData) {
+        if (!cacheData || cacheData !== authCode) {
             return res.status(400).send('인증번호를 다시 요청해주세요.');
-        }
-
-        else if (cacheData !== authCode) {
-            return res.status(400).send('인증번호를 다시 요청해주세요.');
-        }
-
-        else {
+        } else {
             Cache.del(phoneNum);
             return res.status(200).send({ msg: 'success!' });
         };
