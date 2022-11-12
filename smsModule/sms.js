@@ -5,8 +5,9 @@ const Cache = require('memory-cache');
 const CryptoJS = require('crypto-js');
 require("dotenv").config();
 
+// sms 보내기 위한 함수
 function send_message(authNum, phoneNum) {
-    Cache.del(phoneNum);
+    Cache.del(phoneNum); // 요청이 들어왔을때 관련된 내용 캐시 삭제
     Cache.put(phoneNum, authNum);
 
     const date = Date.now().toString();

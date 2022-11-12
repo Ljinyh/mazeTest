@@ -10,9 +10,11 @@ module.exports = {
     sendSMS: async (req, res) => {
         const { phoneNum } = req.body;
 
+        // 랜덤한 6자리 숫자 생성 (type: String)
         const authNum = Math.random().toString().substring(2, 8);
 
         if (phoneNum) {
+            // 문자 보내기
             send_message(authNum, phoneNum);
             return res.status(200).send({ msg: 'success!' });
         };
@@ -22,12 +24,12 @@ module.exports = {
     checkCode: async (req, res) => {
         const { phoneNum, authCode } = req.body;
 
-        const cacheData = Cache.get(phoneNum);
+        const cacheData = Cache.get(phoneNum); // 관련 폰번호로 저장된 캐시 가져오기
 
         if (!cacheData || cacheData !== authCode) {
             return res.status(400).send('인증번호를 다시 요청해주세요.');
         } else {
-            Cache.del(phoneNum);
+            Cache.del(phoneNum); // 인증이 다 끝났다면 캐시 삭제
             return res.status(200).send({ msg: 'success!' });
         };
     },
@@ -35,19 +37,21 @@ module.exports = {
     // 로그인 & 회원가입 API
     signup: async (req, res) => {
         const { phoneNum, AD_check } = req.body;
-        const { type } = req.query;
+        const { type } = req.query; // type = [ login ] or null (signup)
 
+        // refreshToken 생성
         const refreshToken = JWT.sign({}, process.env.SECRETKEY, {
             expiresIn: '3d'
         });
 
         if (type === "login") {
+            // 유저 확인
             const existUser = await Users.findOne({
                 where: { user_phone: phoneNum }
             });
 
             if (existUser) {
-                // token 생성
+                // accessToken 생성
                 const accessToken = JWT.sign({ userId: existUser.id }, process.env.SECRETKEY, {
                     expiresIn: '1d'
                 });
@@ -87,13 +91,13 @@ module.exports = {
                     refreshToken: refreshToken
                 });
 
-                //토큰 발급을 위해 유저찾기
+                // 토큰 발급을 위해 유저찾기
                 const findUser = await Users.findOne({
                     where: { user_phone: phoneNum }
                 })
 
                 if (findUser) {
-                    // token 생성
+                    // accessToken 생성
                     const accessToken = JWT.sign({ userId: findUser.id }, process.env.SECRETKEY, {
                         expiresIn: '1d', //for test
                     });
@@ -103,10 +107,8 @@ module.exports = {
                         refresh: refreshToken,
                         access: accessToken
                     });
-                }
-            }
-
-
+                };
+            };
         };
     },
 };

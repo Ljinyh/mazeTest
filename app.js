@@ -8,6 +8,7 @@ require('dotenv').config();
 
 const app = express();
 
+// DB 연결상태
 sequelize.sync({ force: false })
     .then(() => {
         console.log("DB Connected Success");
@@ -16,12 +17,12 @@ sequelize.sync({ force: false })
         console.log(err);
     });
 
-
-const corOptions = {
+// cors option
+const corsOptions = {
     origin: "http://localhost:3000",
 };
 
-app.use(cors(corOptions));
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
@@ -31,6 +32,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
     res.status(200).send('Backend server');
 });
+
+// router
 app.use('/api', require('./router/userRouter'));
 
 //Error middleware
