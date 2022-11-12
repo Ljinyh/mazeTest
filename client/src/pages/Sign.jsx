@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Buttons, TermsAndAgreements } from '../components';
+import { Buttons, TermsAndAgreements, Authentication } from '../components';
 
 const INITIAL_STEP = 1;
 const INITIAL_SIGN_TYPE = "login";
@@ -16,7 +16,7 @@ function Sign() {
     };
 
     // 2단계
-    const onTermsAndAgreementButtonClik = (newAdCheck) => {
+    const onTermsAndAgreementButtonClick = (newAdCheck) => {
         setAdCheck(newAdCheck);
         setStep(3)
     };
@@ -24,8 +24,8 @@ function Sign() {
     return (
         <div>
             {step === INITIAL_STEP && <Buttons onClick={onSignTypeButtonClick} />}
-            {step === 2 && <TermsAndAgreements onClick={onTermsAndAgreementButtonClik} />}
-            {step === 3}
+            {step === 2 && <TermsAndAgreements onClick={onTermsAndAgreementButtonClick} />}
+            {step === 3 && <Authentication signType={signType} adCheck={adCheck} />}
         </div>
     );
 }

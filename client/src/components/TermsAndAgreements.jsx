@@ -1,11 +1,13 @@
 import { useState } from 'react';
 
 function TermsAndAgreements(props) {
+    const onClick = props.onClick;
     const [termsCheck, setTermsCheck] = useState(false);
 
     const handleSubmit = (e) => {
-        e.preventDefualt(); //새로고침 방지
-        props.onClick(e.target.elements.ad.checked);
+        e.preventDefault(); //새로고침 방지
+        onClick(e.target.elements.ad.checked);
+        console.log('aa')
     };
 
     return (
