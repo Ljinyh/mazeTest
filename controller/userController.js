@@ -10,20 +10,9 @@ module.exports = {
     sendSMS: async (req, res) => {
         const { phoneNum } = req.body;
 
-        // 유저확인
-        const existUser = await Users.findOne({
-            where: { user_phone: phoneNum }
-        });
-
         const authNum = Math.random().toString().substring(2, 8);
 
-        if (existUser) {
-            return res.status(400).send({
-                errorMessage: '이미 등록된 번호입니다.'
-            });
-        }
-
-        if (phoneNum && !existUser) {
+        if (phoneNum) {
             send_message(authNum, phoneNum);
             return res.status(200).send({ msg: 'success!' });
         };
@@ -48,6 +37,10 @@ module.exports = {
         const { phoneNum, AD_check } = req.body;
         const { type } = req.query;
 
+        const refreshToken = JWT.sign({}, process.env.SECRETKEY, {
+            expiresIn: '3d'
+        });
+
         if (type === "login") {
             const existUser = await Users.findOne({
                 where: { user_phone: phoneNum }
@@ -55,10 +48,6 @@ module.exports = {
 
             if (existUser) {
                 // token 생성
-                const refreshToken = JWT.sign({}, process.env.SECRETKEY, {
-                    expiresIn: '3d'
-                });
-
                 const accessToken = JWT.sign({ userId: existUser.id }, process.env.SECRETKEY, {
                     expiresIn: '1d'
                 });
@@ -75,33 +64,49 @@ module.exports = {
                     refresh: refreshToken,
                     access: accessToken
                 });
+            } else {
+                return res.status(400).send({
+                    errorMessage: "회원가입이 필요합니다."
+                })
             };
         } else {
-            const existUser = await Users.findOrCreate({
-                where: { user_phone: phoneNum },
-                defaults: { AD_check: AD_check }
+            // 유저 확인
+            const existUser = await Users.findOne({
+                where: { user_phone: phoneNum }
             });
 
-            if (existUser[0].id) {
-                // token 생성
-                const refreshToken = JWT.sign({}, process.env.SECRETKEY, {
-                    expiresIn: '3d'
+            if (existUser) {
+                return res.status(400).send({
+                    errorMessage: '이미 등록된 번호입니다.'
+                })
+            } else {
+                // 등록된 유저가 아니라면 회원가입
+                await Users.create({
+                    user_phone: phoneNum,
+                    AD_check: AD_check,
+                    refreshToken: refreshToken
                 });
 
-                const accessToken = JWT.sign({ userId: existUser[0].id }, process.env.SECRETKEY, {
-                    expiresIn: '1d', //for test
-                });
+                //토큰 발급을 위해 유저찾기
+                const findUser = await Users.findOne({
+                    where: { user_phone: phoneNum }
+                })
 
-                await Users.update(
-                    { refreshToken: refreshToken },
-                    { where: { user_phone: phoneNum } });
+                if (findUser) {
+                    // token 생성
+                    const accessToken = JWT.sign({ userId: findUser.id }, process.env.SECRETKEY, {
+                        expiresIn: '1d', //for test
+                    });
 
-                return res.status(201).send({
-                    msg: 'success!',
-                    refresh: refreshToken,
-                    access: accessToken
-                });
+                    return res.status(201).send({
+                        msg: 'success!',
+                        refresh: refreshToken,
+                        access: accessToken
+                    });
+                }
             }
+
+
         };
     },
 };
