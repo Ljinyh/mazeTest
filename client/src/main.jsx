@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   createBrowserRouter,
-  RouterProvider
+  RouterProvider,
+  redirect
 } from 'react-router-dom';
 
 import { Main, Sign } from './pages';
@@ -10,11 +11,21 @@ import { Main, Sign } from './pages';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Main />
+    element: <Main />,
+    loader: () => {
+      if (!window.localStorage.getItem('maze-key')) {
+        return redirect('/sign');
+      }
+    }
   }
   , {
     path: "/sign",
-    element: <Sign />
+    element: <Sign />,
+    loader: () => {
+      if (window.localStorage.getItem('maze-key')) {
+        return redirect('/');
+      }
+    }
   }
 ]);
 
